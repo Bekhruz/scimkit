@@ -1,0 +1,47 @@
+# The source of truth for CI is the local gate, `pnpm run ci` (scripts/ci.mjs),
+# which also runs on maintainers' machines. This workflow only runs that same
+# script on GitHub's runners, so results match whatever runs locally.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: Gate (Node.js ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24, 26]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install pnpm
+        run: npm install --global pnpm@10.34.7
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      # The gate starts its own disposable PostgreSQL in Docker.
+      - name: Quality gate
+        run: node scripts/ci.mjs --skip-install
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-node-${{ matrix.node }}
+          path: |
+            reports/
+            coverage/coverage-summary.json
+          if-no-files-found: ignore

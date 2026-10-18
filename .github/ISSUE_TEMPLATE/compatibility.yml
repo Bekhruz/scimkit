@@ -1,0 +1,32 @@
+name: Identity provider compatibility
+description: An identity provider sends something scimkit rejects or handles differently than the provider expects.
+labels: [compatibility]
+body:
+  - type: input
+    id: provider
+    attributes:
+      label: Identity provider
+      placeholder: Okta, Microsoft Entra ID, OneLogin, JumpCloud, Google Workspace, ...
+    validations:
+      required: true
+  - type: textarea
+    id: request
+    attributes:
+      label: The request the provider sent
+      description: From the provider's provisioning log, or scimkit's debug log. Remove tokens and personal data.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: response
+    attributes:
+      label: scimkit's response, and what the provider reported
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Compatibility mode
+      options: [lenient (default), strict]
+    validations:
+      required: true

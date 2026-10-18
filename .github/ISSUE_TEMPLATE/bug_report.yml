@@ -1,0 +1,33 @@
+name: Bug report
+description: scimkit answers a request wrongly, crashes, or its stores disagree.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The request (method, path, body) and the response you got. Remove tokens and personal data.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: The response you expected, with the RFC 7643/7644 section if you know it.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: scimkit, Node.js, NestJS (if used) and PostgreSQL (if used).
+      placeholder: scimkit 0.1.0, Node.js 24.21.0, NestJS 12.1.3, PostgreSQL 17
+    validations:
+      required: true
+  - type: dropdown
+    id: store
+    attributes:
+      label: Storage
+      options: [PostgresScimStore, MemoryScimStore, A custom repository]
+    validations:
+      required: true
